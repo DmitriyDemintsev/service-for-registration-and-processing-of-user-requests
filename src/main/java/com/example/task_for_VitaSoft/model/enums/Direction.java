@@ -1,9 +1,7 @@
 package com.example.task_for_VitaSoft.model.enums;
 
-public enum Role {
+public enum Direction {
 
-    USER,
-    OPERATOR,
-    ADMIN,
-
+    INCREASING,
+    DECREASING
 }

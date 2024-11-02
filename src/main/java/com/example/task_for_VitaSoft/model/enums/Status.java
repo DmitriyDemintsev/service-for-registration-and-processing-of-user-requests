@@ -1,4 +1,4 @@
-package com.example.test_for_VitaSoft.model.enums;
+package com.example.task_for_VitaSoft.model.enums;
 
 public enum Status {
 
