@@ -1,0 +1,62 @@
+package com.example.task_for_VitaSoft.controller;
+
+import com.example.task_for_VitaSoft.security.UserDetailsImpl;
+import com.example.task_for_VitaSoft.service.UserService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@Component
+@Validated
+@Slf4j
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/auth")
+public class AuthController {
+
+    private final UserService userService;
+
+    @GetMapping("/myself")
+    public String getMyself() {
+        final var authentication =  SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            log.debug("Authentication is null");
+            return null;
+        }
+        final var principal = authentication.getPrincipal();
+        if (principal == null) {
+            log.debug("Principal is null");
+            return null;
+        }
+        if (!(principal instanceof UserDetailsImpl)) {
+            log.debug("Principal is not UserDetailsImpl, but {}", principal);
+            return null;
+        }
+        final var user = ((UserDetailsImpl) principal).getUser();
+        log.debug("Got user: {}", user);
+        return user.getEmail();
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        SecurityContextLogoutHandler securityContextLogoutHandler = new SecurityContextLogoutHandler();
+        securityContextLogoutHandler.logout(request, response, null);
+        log.debug("");
+        return "You are logged out of the system";
+    }
+
+    @GetMapping("/login")
+    public String hello() {
+        log.debug("");
+        return "You are logged in";
+    }
+}
