@@ -8,20 +8,20 @@ import java.util.List;
 
 public interface AppService {
 
-    Application createApp(Long userId, Application application); //создать заявку - только юзер
+    Application createApp(Long userId, Application application);
 
-    Application updateApp(Long userId, Application application); // обновить заявку если черновик - только юзер
+    Application updateApp(Long userId, Application application);
 
-    List<Application> getUserApplications(Long userId, Direction direction, int page); //просмотреть все созданные заявки с пагинацией - только юзер
+    List<Application> getUserApplications(Long userId, Direction direction, int page);
 
-    Application sendApp(Long userId, Application application); //отправить заявку на рассмотрение - только юзер
+    Application sendApp(Long userId, Application application);
 
 
-    Application getAppById(Long appId); //найти заявку по id
+    Application getAppById(Long appId);
 
-    Application changeStatusOfApp(Long userId, Long appId, Status status); //принять/отклонить заявку - только оператор
+    Application changeStatusOfApp(Long userId, Long appId, Status status);
 
-    List<Application> viewAllApplications(Long userId, Direction direction, int page); //посмотреть все заявки - только оператор
+    List<Application> viewAllApplications(Long userId, Direction direction, int page);
 
-    List<Application> viewUsersSubmittedApplications(Long userId, String name, Direction direction, int page); //просмотреть заявки конкретного юзера
+    List<Application> viewUsersSubmittedApplications(Long userId, String name, Direction direction, int page);
 }

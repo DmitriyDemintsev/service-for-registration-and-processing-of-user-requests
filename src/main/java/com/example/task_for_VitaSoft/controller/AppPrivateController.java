@@ -6,7 +6,6 @@ import com.example.task_for_VitaSoft.dto.AppUpdateDto;
 import com.example.task_for_VitaSoft.mapper.AppMapper;
 import com.example.task_for_VitaSoft.service.AppService;
 import com.example.task_for_VitaSoft.service.CurrentUserService;
-import com.example.task_for_VitaSoft.service.CurrentUserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -33,7 +32,9 @@ public class AppPrivateController {
      */
     @PostMapping("/applications")
     @ResponseStatus(HttpStatus.CREATED)
+    @Secured({"USER"})
     public AppDto createApp(@Validated @RequestBody AppCreateDto appCreateDto) {
+        log.debug("Creating an application by the user");
         final long userId = currentUserService.getCurrentUser().getUserId();
         return AppMapper.toApplicationsDto(appService.createApp(userId, AppMapper.toCreateApp(appCreateDto)));
     }
@@ -42,11 +43,13 @@ public class AppPrivateController {
      * пользователь может просматривать созданные им заявки с сортировкой
      * по дате ASC/DESC и пагинацией по 5 элементов
      */
-    @GetMapping("/{userId}/applications")
-    @Secured({"OPERATOR"})
-    public List<AppDto> getListsApplications(@PathVariable Long userId,
-                                             @RequestParam(value = "direction", defaultValue = "INCREASING") String direct,
+    @GetMapping("/applications")
+    @Secured({"USER"})
+    public List<AppDto> getListsApplications(@RequestParam(value = "direction", defaultValue = "INCREASING")
+                                             String direct,
                                              @RequestParam(required = false, defaultValue = "0") int page) {
+        log.debug("Viewing user requests sorted by date");
+        final long userId = currentUserService.getCurrentUser().getUserId();
         return AppMapper.toAppDtoList(appService.getUserApplications(userId, AppMapper.toDirect(direct), page));
     }
 
@@ -54,12 +57,13 @@ public class AppPrivateController {
     /**
      * пользователь может редактировать созданные им заявки в статусе "черновик"
      */
-    @PutMapping("/{userId}/applications/{appId}")
-    public AppDto updateApp(@PathVariable("userId") long userId,
-                            @PathVariable("appId") long appId,
+    @PutMapping("/applications/{appId}")
+    @Secured({"USER"})
+    public AppDto updateApp(@PathVariable("appId") long appId,
                             @Valid @RequestBody AppUpdateDto appUpdateDto) {
-
-        return AppMapper.toApplicationsDto(appService.updateApp(userId, AppMapper.toUpdateApp(appUpdateDto, appId))); //и тут
+        log.debug("Editing the application by the user");
+        final long userId = currentUserService.getCurrentUser().getUserId();
+        return AppMapper.toApplicationsDto(appService.updateApp(userId, AppMapper.toUpdateApp(appUpdateDto, appId)));
     }
 
 
@@ -67,7 +71,9 @@ public class AppPrivateController {
      * пользователь может отправлять заявки на рассмотрение оператору
      */
     @PatchMapping("/applications/{appId}")
+    @Secured({"USER"})
     public AppDto sendApp(@PathVariable("appId") long appId) {
+        log.debug("Sending an application for consideration");
         final long userId = currentUserService.getCurrentUser().getUserId();
         return AppMapper.toApplicationsDto(appService.sendApp(userId, appService.getAppById(appId)));
     }

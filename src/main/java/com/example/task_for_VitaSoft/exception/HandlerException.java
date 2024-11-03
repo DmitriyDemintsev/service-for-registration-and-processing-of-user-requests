@@ -41,6 +41,13 @@ public class HandlerException {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public Map<String, String> handleUnauthorizedException(final UnauthorizedException e) {
+        log.error("error 401 has occurred UNAUTHORIZED", e);
+        return Map.of("error", e.getMessage());
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleApplicationNotFoundException(final ApplicationNotFoundException e) {
         log.error("error 404 has occurred NOT_FOUND", e);

@@ -1,6 +1,5 @@
 package com.example.task_for_VitaSoft.security;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,19 +19,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-//    private final JwtConfigurer jwtConfigurer;
-//    private final UserDetailsService userDetailsService;
-
-//    public SecurityConfig(JwtConfigurer jwtConfigurer,
-//                          @Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService) {
-//        this.jwtConfigurer = jwtConfigurer;
-//        this.userDetailsService = userDetailsService;
-//    }
-
-//    public SecurityConfig(@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService) {
-//        this.userDetailsService = userDetailsService;
-//    }
-
         @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
@@ -46,7 +32,6 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
                 .and().formLogin()
                 .and().httpBasic();
-//        http.apply(jwtConfigurer);
         return http.build();
     }
 

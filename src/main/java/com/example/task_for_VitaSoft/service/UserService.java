@@ -12,9 +12,5 @@ public interface UserService {
 
     User assignRole(Long adminId, Long userId);
 
-
-    //удалить перед сдачей
-    User create(User user);
-
     User getUserById(long id);
 }

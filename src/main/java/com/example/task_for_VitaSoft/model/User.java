@@ -30,4 +30,3 @@ public class User {
     @Enumerated(EnumType.STRING)
     private List<Role> roles;
 }
-

@@ -10,6 +10,7 @@ import com.example.task_for_VitaSoft.model.enums.Status;
 import com.example.task_for_VitaSoft.repository.AppRepository;
 import com.example.task_for_VitaSoft.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -25,8 +26,9 @@ import static com.example.task_for_VitaSoft.model.enums.Role.OPERATOR;
 import static com.example.task_for_VitaSoft.model.enums.Role.USER;
 import static com.example.task_for_VitaSoft.model.enums.Status.*;
 
-@Service
+@Slf4j
 @RequiredArgsConstructor
+@Service
 public class AppServiceImpl implements AppService {
 
     private final AppRepository applicationRepository;
@@ -40,18 +42,23 @@ public class AppServiceImpl implements AppService {
     @Override
     public Application createApp(Long userId, Application application) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserValidationException("Такого пользователя не существует"));
+                .orElseThrow(() -> new UserValidationException("The user does not exist"));
+        log.debug("User with id {} ", userId + " is not in the database");
         if (application.getText() == null || application.getText().isBlank()) {
-            throw new AppValidationException("Отсутствует текст заявки");
+            log.debug("The application text is missing");
+            throw new AppValidationException("The application text is missing");
         }
         if (user.getRoles().contains(USER)) {
+            log.debug("Creating a request from a user with an id {}", userId);
             application.setAuthor(user);
             application.setStatus(DRAFT);
             application.setCreated(LocalDateTime.now());
             application = applicationRepository.save(application);
         } else {
-            throw new UserValidationException("У вас нет прав на создание заявки");
+            log.debug("A user with id {} ", userId + " does not have rights to create an application");
+            throw new UserValidationException("There are no rights to create an application");
         }
+        log.debug("The application with id = {} has been created", application.getAppId());
         return application;
     }
 
@@ -62,10 +69,13 @@ public class AppServiceImpl implements AppService {
     @Override
     public List<Application> getUserApplications(Long userId, Direction direction, int page) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserValidationException("Такого пользователя не существует"));
+                .orElseThrow(() -> new UserValidationException("The user does not exist"));
+        log.debug("User with id {} ", userId + " is not in the database");
         if (direction.equals(DECREASING)) {
+            log.debug("ПA user with id {} ", userId + " received applications for viewing in descending order");
             return applicationRepository.findAllByAuthor(user, getPageableDesc(page));
         }
+        log.debug("The user with the id {} ", userId + " received applications for viewing in ascending order");
         return applicationRepository.findAllByAuthor(user, getPageableAsc(page));
     }
 
@@ -75,24 +85,30 @@ public class AppServiceImpl implements AppService {
     @Override
     public Application updateApp(Long userId, Application application) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserValidationException("Такого пользователя не существует"));
+                .orElseThrow(() -> new UserValidationException("The user does not exist"));
+        log.debug("User with id {} ", userId + " is not in the database");
         Application old = applicationRepository.findById(application.getAppId())
-                .orElseThrow(() -> new ApplicationNotFoundException("Заявка не найдена"));
+                .orElseThrow(() -> new ApplicationNotFoundException("The application was not found"));
         if (!old.getAuthor().getUserId().equals(userId)) {
-            throw new UserValidationException("Редактировать заявку может только автор");
+            log.debug("The user with id {} ", userId + " does not have rights to edit the application");
+            throw new UserValidationException("Only the author can edit the application");
         }
         if (application.getText().isBlank()) {
-            throw new AppValidationException("Отсутствует текст заявки");
+            log.debug("The user with the id {} ", userId + " did not send the text to change the request");
+            throw new AppValidationException("The application text is missing");
         }
         if (user.getRoles().contains(USER) && old.getStatus().equals(DRAFT)) {
+            log.debug("Changing the status of the application");
             application.setAuthor(old.getAuthor());
             application.setText(application.getText());
             application.setStatus(old.getStatus());
             application.setCreated(old.getCreated());
         } else {
-            throw new AppValidationException("Заявка недоступна для редактирования");
+            log.debug("The application of a user with id {} ", userId + " is not available for modification");
+            throw new AppValidationException("The application is not available for editing");
         }
-        return applicationRepository.save(application); //тут
+        log.debug("A user with id {} ", userId + " has changed the application text");
+        return applicationRepository.save(application);
     }
 
     /**
@@ -101,17 +117,22 @@ public class AppServiceImpl implements AppService {
     @Override
     public Application sendApp(Long userId, Application application) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserValidationException("Такого пользователя не существует"));
+                .orElseThrow(() -> new UserValidationException("The user does not exist"));
+        log.debug("User with id {} ", userId + " is not in the database");
         Application old = applicationRepository.findById(application.getAppId())
-                .orElseThrow(() -> new ApplicationNotFoundException("Заявка не найдена"));
+                .orElseThrow(() -> new ApplicationNotFoundException("The application was not found"));
         if (user.getRoles().contains(USER) && application.getAuthor().getUserId().equals(userId)) {
+            log.debug("A user with id {} ", userId + " sends an application for consideration to the operator");
             application.setAuthor(old.getAuthor());
             application.setText(old.getText());
             application.setStatus(Status.SENT);
             application.setCreated(old.getCreated());
         } else {
-            throw new UserValidationException("Вы не можете отправить заявку на расмотрение");
+            log.debug("The user with id {} ", userId
+                    + " does not have the rights to send an application for consideration to the operator");
+            throw new UserValidationException("You cannot submit an application for review");
         }
+        log.debug("A user with id {} ", userId + " has sent an application for consideration to the operator");
         return applicationRepository.save(application);
     }
 
@@ -133,15 +154,20 @@ public class AppServiceImpl implements AppService {
     public List<Application> viewAllApplications(Long userId, Direction direction, int page) {
         List<Application> applications = new ArrayList<>();
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserValidationException("Такого пользователя не существует"));
+                .orElseThrow(() -> new UserValidationException("The user does not exist"));
+        log.debug("User with id {} ", userId + " is not in the database");
         if (!user.getRoles().contains(OPERATOR)) {
-            throw new UserValidationException("У вас нет прав на просмотр заявок");
+            log.debug("A user with id {} ", userId + " does not have rights to view applications");
+            throw new UserValidationException("You do not have rights to view applications");
         }
         if (direction.equals(INCREASING)) {
+            log.debug("A user with id {} ", userId + " has received applications for viewing in ascending order");
             applications.addAll(applicationRepository.findApplicationsByStatus(SENT, getPageableAsc(page)));
         } else {
+            log.debug("A user with id {} ", userId + " received applications for viewing in descending order");
             applications.addAll(applicationRepository.findApplicationsByStatus(SENT, getPageableDesc(page)));
         }
+        log.debug("The user with the id {} ", userId + " has been provided with applications for viewing");
         return applications;
     }
 
@@ -154,15 +180,24 @@ public class AppServiceImpl implements AppService {
         List<User> users = userService.getUserByNameSearch(name);
         List<Application> applications = new ArrayList<>();
         if (!userService.getUserById(userId).getRoles().contains(OPERATOR)) {
-            throw new UserValidationException("У вас нет прав на просмотр заявок");
+            log.debug("A user with id {} ", userId + " does not have rights to view applications");
+            throw new UserValidationException("You do not have rights to view applications");
         }
         for (User user : users) {
             if (direction.equals(INCREASING)) {
-                applications.addAll(applicationRepository.findApplicationsByAuthorAndStatus(user, SENT, getPageableAsc(page)));
+                log.debug("A user with id {} ", userId + " uploads the applications of a user with the name " + name
+                        + " for viewing in ascending order");
+                applications.addAll(applicationRepository.findApplicationsByAuthorAndStatus(user,
+                        SENT, getPageableAsc(page)));
             } else {
-                applications.addAll(applicationRepository.findApplicationsByAuthorAndStatus(user, SENT, getPageableDesc(page)));
+                log.debug("A user with id {} ", userId + " uploads the applications of a user with the name " + name
+                        + " for viewing in descending order");
+                applications.addAll(applicationRepository.findApplicationsByAuthorAndStatus(user,
+                        SENT, getPageableDesc(page)));
             }
         }
+        log.debug("For a user with id {} ", userId + ", the applications of a user with the name " + name
+                + " have been uploaded for viewing");
         return applications;
     }
 
@@ -172,24 +207,31 @@ public class AppServiceImpl implements AppService {
     @Override
     public Application changeStatusOfApp(Long userId, Long appId, Status status) {
         Application application = applicationRepository.findById(appId)
-                .orElseThrow(() -> new ApplicationNotFoundException("Заявка не найдена"));
+                .orElseThrow(() -> new ApplicationNotFoundException("The application was not found"));
+        log.debug("Application with id {} ", appId + " not found");
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserValidationException("Такого пользователя не существует"));
+        log.debug("User with id {} ", userId + " is not in the database");
         if (user.getRoles().contains(OPERATOR) && application.getStatus().equals(SENT)) {
             if (status.equals(ACCEPTED)) {
+                log.debug("Changing the status of the user's request {} ", user.getName() + " to ACCEPTED");
                 application.setStatus(ACCEPTED);
             } else if (status.equals(REJECTED)) {
+                log.debug("Changing the status of the user's request {} ", user.getName() + " to REJECTED");
                 application.setStatus(Status.REJECTED);
             }
         } else {
+            log.debug("The user with id {} ", user.getName() +
+                    " does not have the rights to change the status of the application");
             throw new UserValidationException("У вас нет прав на работу заявками");
         }
+        log.debug("The status of the application with id {} ", appId + " has been changed");
         return applicationRepository.save(application);
     }
 
-    //найти заявку по её id
     @Override
     public Application getAppById(Long appId) {
+        log.debug("Receiving an application by its id");
         return applicationRepository.findById(appId).orElseThrow();
     }
 }
