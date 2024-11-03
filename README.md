@@ -46,7 +46,7 @@
 
 Стек:
 •	Java 11
-•	Аархитектуру REST
+•	Аархитектура REST
 •	Spring Boot
 •	Spring Security
 •	Hibernate
