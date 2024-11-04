@@ -34,7 +34,17 @@ public class AppMapper {
         );
     }
 
-    public static AppDto toApplicationsDto(Application application) {
+    public static AppDto toApplicationsDtoForUser(Application application) {
+        return new AppDto(
+                application.getAppId(),
+                UserMapper.toUserShortDto(application.getAuthor()),
+                application.getText(),
+                application.getStatus(),
+                application.getCreated()
+        );
+    }
+
+    public static AppDto toApplicationsDtoForOperator(Application application) {
         return new AppDto(
                 application.getAppId(),
                 UserMapper.toUserShortDto(application.getAuthor()),
@@ -63,7 +73,7 @@ public class AppMapper {
     public static List<AppDto> toAppDtoList(Iterable<Application> applications) {
         List<AppDto> result = new ArrayList<>();
         for (Application application : applications) {
-            result.add(toApplicationsDto(application));
+            result.add(toApplicationsDtoForOperator(application));
         }
         return result;
     }

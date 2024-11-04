@@ -35,13 +35,6 @@ public class HandlerException {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public Map<String, String> handleAuthenticationException(final JwtAuthenticationException e) {
-        log.error("error 401 has occurred UNAUTHORIZED", e);
-        return Map.of("error", e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public Map<String, String> handleUnauthorizedException(final UnauthorizedException e) {
         log.error("error 401 has occurred UNAUTHORIZED", e);
         return Map.of("error", e.getMessage());

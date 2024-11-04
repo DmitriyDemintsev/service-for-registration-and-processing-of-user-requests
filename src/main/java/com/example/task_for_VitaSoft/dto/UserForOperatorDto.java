@@ -7,8 +7,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
 @AllArgsConstructor
+@RequiredArgsConstructor
 public class UserForOperatorDto {
 
     private String name;

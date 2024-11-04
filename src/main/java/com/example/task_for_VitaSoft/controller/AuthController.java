@@ -29,20 +29,20 @@ public class AuthController {
     public String getMyself() {
         final var authentication =  SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
-            log.debug("Authentication is null");
+            log.info("Authentication is null");
             return null;
         }
         final var principal = authentication.getPrincipal();
         if (principal == null) {
-            log.debug("Principal is null");
+            log.info("Principal is null");
             return null;
         }
         if (!(principal instanceof UserDetailsImpl)) {
-            log.debug("Principal is not UserDetailsImpl, but {}", principal);
+            log.info("Principal is not UserDetailsImpl, but {}", principal);
             return null;
         }
         final var user = ((UserDetailsImpl) principal).getUser();
-        log.debug("Got user: {}", user);
+        log.info("Got user: {}", user);
         return user.getEmail();
     }
 
@@ -50,13 +50,7 @@ public class AuthController {
     public String logout(HttpServletRequest request, HttpServletResponse response) {
         SecurityContextLogoutHandler securityContextLogoutHandler = new SecurityContextLogoutHandler();
         securityContextLogoutHandler.logout(request, response, null);
-        log.debug("");
+        log.debug("The user logs out");
         return "You are logged out of the system";
-    }
-
-    @GetMapping("/login")
-    public String hello() {
-        log.debug("");
-        return "You are logged in";
     }
 }

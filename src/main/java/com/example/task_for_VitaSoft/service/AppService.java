@@ -16,7 +16,6 @@ public interface AppService {
 
     Application sendApp(Long userId, Application application);
 
-
     Application getAppById(Long appId);
 
     Application changeStatusOfApp(Long userId, Long appId, Status status);

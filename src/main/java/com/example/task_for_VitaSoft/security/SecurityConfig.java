@@ -25,9 +25,9 @@ public class SecurityConfig {
         http.sessionManagement((sessionManagement) ->
                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
         http.authorizeRequests()
-                .antMatchers("/users/**").hasRole("USER")
-                .antMatchers("/operators/**").hasRole("OPERATOR")
-                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/users").hasRole("USER")
+                .antMatchers("/operators").hasRole("OPERATOR")
+                .antMatchers("/admin").hasRole("ADMIN")
                 .antMatchers("/auth/**").permitAll()
                 .anyRequest().authenticated()
                 .and().formLogin()

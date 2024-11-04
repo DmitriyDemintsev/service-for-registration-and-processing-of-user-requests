@@ -16,7 +16,7 @@ import java.util.List;
 @Component
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/operators/{userId}/applications")
+@RequestMapping("/operators/applications")
 public class AppOperatorController {
 
     private final AppService appService;
@@ -61,6 +61,6 @@ public class AppOperatorController {
                                     @RequestParam(value = "status") String status) {
         final long userId = currentUserService.getCurrentUser().getUserId();
         log.debug("Acceptance/rejection of applications by the operator");
-        return AppMapper.toApplicationsDto(appService.changeStatusOfApp(userId, appId, AppMapper.toStatus(status)));
+        return AppMapper.toApplicationsDtoForOperator(appService.changeStatusOfApp(userId, appId, AppMapper.toStatus(status)));
     }
 }
