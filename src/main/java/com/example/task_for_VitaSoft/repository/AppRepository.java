@@ -17,6 +17,8 @@ public interface AppRepository extends JpaRepository<Application, Long> {
 
     List<Application> findAllByAuthor(User user, Pageable pageable);
 
+    List<Application> findAllByAuthor(User user);
+
     List<Application> findApplicationsByStatus(Status status, Pageable pageable);
 
     List<Application> findApplicationsByAuthorAndStatus(User user, Status status, Pageable pageable);

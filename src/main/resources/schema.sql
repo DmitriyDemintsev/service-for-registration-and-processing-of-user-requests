@@ -59,8 +59,8 @@ INSERT INTO applications VALUES(10, 9, 'Девятая заявка от Ива�
 INSERT INTO applications VALUES(11, 9, 'Десятая заявка от Иванова', 'REJECTED', '2024-10-10 23:10:05');
 INSERT INTO applications VALUES(12, 3, 'заявка от Петра', 'SENT', '2024-10-03 23:10:05');
 INSERT INTO applications VALUES(13, 4, 'заявка от Сергея', 'ACCEPTED', '2024-10-03 23:10:05');
-INSERT INTO applications VALUES(14, 5, 'заявка от Анна', 'SENT', '2024-10-04 23:10:05');
-INSERT INTO applications VALUES(15, 6, 'заявка от Марина', 'ACCEPTED', '2024-10-03 23:10:05');
-INSERT INTO applications VALUES(16, 7, 'заявка от Вероника', 'SENT', '2024-10-05 23:10:05');
-INSERT INTO applications VALUES(17, 2, 'заявка от Иван', 'SENT', '2024-10-06 23:10:05');
-INSERT INTO applications VALUES(18, 10, 'заявка от Иванович', 'SENT', '2024-10-12 23:10:05');
+INSERT INTO applications VALUES(14, 5, 'заявка от Анны', 'SENT', '2024-10-04 23:10:05');
+INSERT INTO applications VALUES(15, 6, 'заявка от Марины', 'ACCEPTED', '2024-10-03 23:10:05');
+INSERT INTO applications VALUES(16, 7, 'заявка от Вероники', 'SENT', '2024-10-05 23:10:05');
+INSERT INTO applications VALUES(17, 2, 'заявка от Ивана', 'SENT', '2024-10-06 23:10:05');
+INSERT INTO applications VALUES(18, 10, 'заявка от Ивановича', 'SENT', '2024-10-12 23:10:05');

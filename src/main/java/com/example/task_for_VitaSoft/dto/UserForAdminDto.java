@@ -16,5 +16,4 @@ public class UserForAdminDto {
 
     private String name;
     private String email;
-    private List<Role> role;
 }

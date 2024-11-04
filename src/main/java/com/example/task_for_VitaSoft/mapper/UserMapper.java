@@ -43,14 +43,15 @@ public class UserMapper {
     public static UserForAdminDto toUserShortDto(User user) {
         UserForAdminDto userForAdminDto = new UserForAdminDto(
                 user.getName(),
-                user.getEmail(),
-                user.getRoles());
+                user.getEmail()
+        );
         return userForAdminDto;
     }
 
     public static UserForOperatorDto toUserForOperatorDto(User user) {
-        UserForOperatorDto UserForOperatorDto = new UserForOperatorDto(
-                user.getName());
-        return UserForOperatorDto;
+        UserForOperatorDto userForOperatorDto = new UserForOperatorDto(
+                user.getName()
+        );
+        return userForOperatorDto;
     }
 }

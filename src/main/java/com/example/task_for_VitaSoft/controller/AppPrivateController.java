@@ -36,7 +36,7 @@ public class AppPrivateController {
     public AppDto createApp(@Validated @RequestBody AppCreateDto appCreateDto) {
         log.debug("Creating an application by the user");
         final long userId = currentUserService.getCurrentUser().getUserId();
-        return AppMapper.toApplicationsDto(appService.createApp(userId, AppMapper.toCreateApp(appCreateDto)));
+        return AppMapper.toApplicationsDtoForUser(appService.createApp(userId, AppMapper.toCreateApp(appCreateDto)));
     }
 
     /**
@@ -63,7 +63,7 @@ public class AppPrivateController {
                             @Valid @RequestBody AppUpdateDto appUpdateDto) {
         log.debug("Editing the application by the user");
         final long userId = currentUserService.getCurrentUser().getUserId();
-        return AppMapper.toApplicationsDto(appService.updateApp(userId, AppMapper.toUpdateApp(appUpdateDto, appId)));
+        return AppMapper.toApplicationsDtoForUser(appService.updateApp(userId, AppMapper.toUpdateApp(appUpdateDto, appId)));
     }
 
 
@@ -75,6 +75,6 @@ public class AppPrivateController {
     public AppDto sendApp(@PathVariable("appId") long appId) {
         log.debug("Sending an application for consideration");
         final long userId = currentUserService.getCurrentUser().getUserId();
-        return AppMapper.toApplicationsDto(appService.sendApp(userId, appService.getAppById(appId)));
+        return AppMapper.toApplicationsDtoForUser(appService.sendApp(userId, appService.getAppById(appId)));
     }
 }

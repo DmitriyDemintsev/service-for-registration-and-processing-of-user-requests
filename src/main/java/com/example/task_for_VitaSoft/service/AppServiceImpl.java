@@ -53,7 +53,7 @@ public class AppServiceImpl implements AppService {
             application.setAuthor(user);
             application.setStatus(DRAFT);
             application.setCreated(LocalDateTime.now());
-            application = applicationRepository.save(application);
+            applicationRepository.save(application);
         } else {
             log.debug("A user with id {} ", userId + " does not have rights to create an application");
             throw new UserValidationException("There are no rights to create an application");
@@ -152,14 +152,23 @@ public class AppServiceImpl implements AppService {
      */
     @Override
     public List<Application> viewAllApplications(Long userId, Direction direction, int page) {
-        List<Application> applications = new ArrayList<>();
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserValidationException("The user does not exist"));
-        log.debug("User with id {} ", userId + " is not in the database");
-        if (!user.getRoles().contains(OPERATOR)) {
+        if (!userService.getUserById(userId).getRoles().contains(OPERATOR)) {
             log.debug("A user with id {} ", userId + " does not have rights to view applications");
             throw new UserValidationException("You do not have rights to view applications");
         }
+
+        List<Application> applications = new ArrayList<>();
+        List<Application> old = applicationRepository.findAll();
+        for (Application application : old) {
+            String text = application.getText();
+            StringBuilder newText = new StringBuilder();
+            for (int i = 0; i < text.length(); i++) {
+                char character = text.charAt(i);
+                newText.append(i != text.length() - 1 ? character + "-" : character);
+            }
+            application.setText(String.valueOf(newText));
+        }
+
         if (direction.equals(INCREASING)) {
             log.debug("A user with id {} ", userId + " has received applications for viewing in ascending order");
             applications.addAll(applicationRepository.findApplicationsByStatus(SENT, getPageableAsc(page)));
@@ -177,13 +186,23 @@ public class AppServiceImpl implements AppService {
      */
     @Override
     public List<Application> viewUsersSubmittedApplications(Long userId, String name, Direction direction, int page) {
-        List<User> users = userService.getUserByNameSearch(name);
-        List<Application> applications = new ArrayList<>();
         if (!userService.getUserById(userId).getRoles().contains(OPERATOR)) {
             log.debug("A user with id {} ", userId + " does not have rights to view applications");
             throw new UserValidationException("You do not have rights to view applications");
         }
+        List<User> users = userService.getUserByNameSearch(name);
+        List<Application> applications = new ArrayList<>();
         for (User user : users) {
+            List<Application> old = applicationRepository.findAllByAuthor(user);
+            for (Application application : old) {
+                String text = application.getText();
+                StringBuilder newText = new StringBuilder();
+                for (int i = 0; i < text.length(); i++) {
+                    char character = text.charAt(i);
+                    newText.append(i != text.length() - 1 ? character + "-" : character);
+                }
+                application.setText(String.valueOf(newText));
+            }
             if (direction.equals(INCREASING)) {
                 log.debug("A user with id {} ", userId + " uploads the applications of a user with the name " + name
                         + " for viewing in ascending order");
@@ -218,7 +237,7 @@ public class AppServiceImpl implements AppService {
                 application.setStatus(ACCEPTED);
             } else if (status.equals(REJECTED)) {
                 log.debug("Changing the status of the user's request {} ", user.getName() + " to REJECTED");
-                application.setStatus(Status.REJECTED);
+                application.setStatus(REJECTED);
             }
         } else {
             log.debug("The user with id {} ", user.getName() +
