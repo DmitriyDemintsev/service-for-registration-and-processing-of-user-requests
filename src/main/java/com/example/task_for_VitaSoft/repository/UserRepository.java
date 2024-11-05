@@ -13,10 +13,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findAll();
 
-    @Query("select u from User u where upper (name) like upper (concat('%', ?1, '%'))")
-    List<User> findUserBySearch(String name);
-
-    User findUserByEmail(String email);
+    List<User> findByNameContainingIgnoreCase(String name);
 
     Optional<User> findByEmail(String email);
 }

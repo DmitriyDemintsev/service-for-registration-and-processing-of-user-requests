@@ -156,19 +156,11 @@ public class AppServiceImpl implements AppService {
             log.debug("A user with id {} ", userId + " does not have rights to view applications");
             throw new UserValidationException("You do not have rights to view applications");
         }
-
         List<Application> applications = new ArrayList<>();
         List<Application> old = applicationRepository.findAll();
         for (Application application : old) {
-            String text = application.getText();
-            StringBuilder newText = new StringBuilder();
-            for (int i = 0; i < text.length(); i++) {
-                char character = text.charAt(i);
-                newText.append(i != text.length() - 1 ? character + "-" : character);
-            }
-            application.setText(String.valueOf(newText));
+            getTextWithDash(application);
         }
-
         if (direction.equals(INCREASING)) {
             log.debug("A user with id {} ", userId + " has received applications for viewing in ascending order");
             applications.addAll(applicationRepository.findApplicationsByStatus(SENT, getPageableAsc(page)));
@@ -195,13 +187,7 @@ public class AppServiceImpl implements AppService {
         for (User user : users) {
             List<Application> old = applicationRepository.findAllByAuthor(user);
             for (Application application : old) {
-                String text = application.getText();
-                StringBuilder newText = new StringBuilder();
-                for (int i = 0; i < text.length(); i++) {
-                    char character = text.charAt(i);
-                    newText.append(i != text.length() - 1 ? character + "-" : character);
-                }
-                application.setText(String.valueOf(newText));
+                getTextWithDash(application);
             }
             if (direction.equals(INCREASING)) {
                 log.debug("A user with id {} ", userId + " uploads the applications of a user with the name " + name
@@ -252,5 +238,16 @@ public class AppServiceImpl implements AppService {
     public Application getAppById(Long appId) {
         log.debug("Receiving an application by its id");
         return applicationRepository.findById(appId).orElseThrow();
+    }
+
+    private Application getTextWithDash(Application application) {
+        String text = application.getText();
+        StringBuilder newText = new StringBuilder();
+        for (int i = 0; i < text.length(); i++) {
+            char character = text.charAt(i);
+            newText.append(i != text.length() - 1 ? character + "-" : character);
+        }
+        application.setText(String.valueOf(newText));
+        return application;
     }
 }
