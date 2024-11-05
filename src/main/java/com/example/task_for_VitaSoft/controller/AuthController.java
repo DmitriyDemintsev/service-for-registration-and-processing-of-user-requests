@@ -1,19 +1,22 @@
 package com.example.task_for_VitaSoft.controller;
 
+import com.example.task_for_VitaSoft.dto.UserCreateDto;
+import com.example.task_for_VitaSoft.dto.UserDto;
+import com.example.task_for_VitaSoft.mapper.UserMapper;
 import com.example.task_for_VitaSoft.security.UserDetailsImpl;
 import com.example.task_for_VitaSoft.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 @Component
 @Validated
