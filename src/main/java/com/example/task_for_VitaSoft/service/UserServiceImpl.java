@@ -67,21 +67,4 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserNotFoundException("The user with the id {} " + userId
                         + " is not in the database"));
     }
-
-    /** для самоконтроля */
-    @Override
-    public User create(User user) {
-        if (user.getName() == null || user.getName().isEmpty()) {
-            throw new UserValidationException("The user name is not specified");
-        }
-        if (user.getEmail() == null || user.getEmail().isEmpty()) {
-            throw new UserValidationException("The email is not specified");
-        }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(Collections.singletonList(Role.ADMIN));
-        user = userRepository.save(user);
-
-        return user;
-    }
-
 }
