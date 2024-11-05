@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -63,6 +64,7 @@ public class UserServiceImpl implements UserService {
     public User getUserById(long userId) {
         log.debug("Getting a user by id");
         return userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("The user with the id {} " + userId + " is not in the database"));
+                .orElseThrow(() -> new UserNotFoundException("The user with the id {} " + userId
+                        + " is not in the database"));
     }
 }
