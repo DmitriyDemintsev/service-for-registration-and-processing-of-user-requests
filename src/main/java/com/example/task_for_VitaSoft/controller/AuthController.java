@@ -49,6 +49,13 @@ public class AuthController {
         return user.getEmail();
     }
 
+    /** для самоконтроля – регистрируем/создаем пользователя */
+    @PostMapping("/reg")
+    public UserDto createUser(@Valid @RequestBody UserCreateDto userCreateDto) {
+        log.debug("Создаем пользователя");
+        return UserMapper.toUserDto(userService.create(UserMapper.toUser(userCreateDto, null)));
+    }
+
     @GetMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response) {
         SecurityContextLogoutHandler securityContextLogoutHandler = new SecurityContextLogoutHandler();

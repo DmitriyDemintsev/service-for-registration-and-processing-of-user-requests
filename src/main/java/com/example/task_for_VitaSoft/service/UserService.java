@@ -13,4 +13,6 @@ public interface UserService {
     User assignRole(Long adminId, Long userId);
 
     User getUserById(long id);
+
+    User create(User user); //для самоконтроля
 }
